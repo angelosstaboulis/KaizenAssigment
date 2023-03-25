@@ -7,7 +7,10 @@
 
 import SwiftUI
 
+
+
 struct CellRow: View {
+    @State var getSelect:Int!
     @State private var tapped: Bool = false
     @State var sport:SportsModel
     @State var favorite:String!="star"
@@ -28,7 +31,7 @@ struct CellRow: View {
             if tapped {
                 ScrollView(.horizontal){
                     HStack{
-                        ForEach(0..<sport.subcategories!.count){ item in
+                        ForEach(0..<sport.subcategories!.count-1){ item in
                             VStack{
                                 HStack{
                                     HStack{
@@ -36,9 +39,21 @@ struct CellRow: View {
                                     }
                                 }.padding(10)
                                 HStack{
-                                    Image(systemName:favorite).onTapGesture {
-                                        _ = sport.subcategories?.removeFirst()
-                                        sport.subcategories?.insert(sport.subcategories![item-1], at: 0)
+                                    if #available(iOS 16.0, *) {
+                                        Image(systemName:favorite).onTapGesture {
+                                            _ = sport.subcategories?.removeFirst()
+                                            sport.subcategories?.insert(sport.subcategories![item-1], at: 0)
+                                            sport.subcategories?.sorted()
+                                            let first = sport.subcategories?.first
+                                            for value in sport.subcategories! {
+                                                if value.title.contains(first!.title){
+                                                    sport.subcategories?.remove(at: item)
+                                                    break
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        // Fallback on earlier versions
                                     }
                                 }
                                 HStack{
